@@ -1,0 +1,24 @@
+# WhatsApp session data
+.wwebjs_auth/
+.wwebjs_cache/
+
+# Google credentials (keep secret!)
+credentials/
+
+# Environment variables
+.env
+
+# Node modules
+node_modules/
+
+# Logs
+logs/
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
