@@ -5,6 +5,7 @@ Archives links shared in a WhatsApp group to a Google Sheet automatically.
 ## Features
 
 - 🔗 **Automatic link capture** - Detects and archives any URLs shared in the group
+- 📎 **Document archiving** - Uploads shared documents to Catbox.moe and archives the link
 - 📊 **Google Sheets integration** - Links stored with Title, Type, Keywords
 - 🔄 **Smart catch-up** - Syncs missed messages when bot restarts (last 100 by default)
 - 🚫 **Duplicate prevention** - Uses message IDs to never add the same link twice
@@ -73,8 +74,11 @@ The session is saved locally, so you won't need to scan again unless you logout.
 |----------|-------------|---------|
 | `GOOGLE_SHEET_ID` | Your Google Sheet ID | Required |
 | `TARGET_GROUP_ID` | WhatsApp group ID to monitor | Required |
+| `GROQ_API_KEY` | Groq API key for smart extraction | Optional |
+| `CATBOX_USERHASH` | Catbox.moe user hash for upload management | Optional |
 | `CATCHUP_MESSAGE_COUNT` | Messages to sync on restart | 100 |
 | `LOG_LEVEL` | Logging verbosity | info |
+
 
 ## Project Structure
 

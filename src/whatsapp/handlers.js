@@ -5,7 +5,8 @@
 const config = require('../../config/default');
 const logger = require('../utils/logger');
 const { extractUrls, hasLinks } = require('../utils/linkExtractor');
-const { extractWithLLM } = require('../utils/llmExtractor');
+const { extractWithLLM, extractDocumentMetadata } = require('../utils/llmExtractor');
+const { uploadDocument, canUpload } = require('../utils/documentUploader');
 const deduplication = require('../utils/deduplication');
 const sheetsOperations = require('../sheets/operations');
 
@@ -94,6 +95,74 @@ async function processLinkMessage(message) {
 }
 
 /**
+ * Process a message that contains a document attachment
+ * @param {Message} message - WhatsApp message object
+ * @returns {Promise<boolean>} True if processed successfully
+ */
+async function processDocumentMessage(message) {
+    const messageId = message.id._serialized;
+
+    // Check for duplicates FIRST
+    if (deduplication.isDuplicate(messageId)) {
+        logger.debug(`Skipping duplicate document message: ${messageId}`);
+        return false;
+    }
+
+    // Mark as processed IMMEDIATELY to prevent race conditions
+    deduplication.markProcessed(messageId);
+
+    try {
+        // Download the media
+        const media = await message.downloadMedia();
+        if (!media || !media.data) {
+            logger.warn(`Failed to download media from message: ${messageId}`);
+            return false;
+        }
+
+        const filename = media.filename || `document_${Date.now()}`;
+        const mimetype = media.mimetype || 'application/octet-stream';
+        const buffer = Buffer.from(media.data, 'base64');
+
+        // Check if file can be uploaded
+        const uploadCheck = canUpload(buffer.length, filename);
+        if (!uploadCheck.canUpload) {
+            logger.warn(`Cannot upload ${filename}: ${uploadCheck.reason}`);
+            // Error logged above, no reaction to avoid confusing users
+            return false;
+        }
+
+        // Upload to Catbox.moe
+        const uploadResult = await uploadDocument(buffer, filename, mimetype);
+        if (!uploadResult.success) {
+            logger.error(`Upload failed for ${filename}: ${uploadResult.error}`);
+            // Error logged above, no reaction to avoid confusing users
+            return false;
+        }
+
+        // Extract metadata using LLM or use filename
+        const body = message.body || '';
+        const extracted = await extractDocumentMetadata(body, filename);
+
+        await sheetsOperations.appendLink({
+            title: extracted.title || filename,
+            type: extracted.type || 'Document',
+            keywords: extracted.keywords || '',
+            url: uploadResult.url,
+            messageId
+        });
+
+        // React with ☕ emoji to confirm archiving
+        await message.react('☕');
+
+        logger.info(`Archived document: "${filename}" -> ${uploadResult.url}`);
+        return true;
+    } catch (error) {
+        logger.error(`Failed to process document: ${error.message}`);
+        return false;
+    }
+}
+
+/**
  * Handle incoming message event
  * @param {Message} message - WhatsApp message object
  * @param {string} targetGroupId - ID of the target group to monitor
@@ -110,6 +179,13 @@ async function handleMessage(message, targetGroupId) {
 
         // Check for commands first
         if (await handleCommand(message, chat)) {
+            return;
+        }
+
+        // Check for document attachments
+        if (message.hasMedia && message.type === 'document') {
+            logger.debug(`Processing document from group "${chat.name}"`);
+            await processDocumentMessage(message);
             return;
         }
 
@@ -141,6 +217,7 @@ function setupMessageListener(client, targetGroupId) {
 
 module.exports = {
     processLinkMessage,
+    processDocumentMessage,
     handleMessage,
     handleCommand,
     setupMessageListener
