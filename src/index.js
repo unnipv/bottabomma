@@ -43,7 +43,11 @@ async function main() {
                 }
 
                 // Initialize catch-up sync (loads dedup cache + syncs missed messages)
-                await catchupManager.initialize(targetGroup);
+                try {
+                    await catchupManager.initialize(targetGroup);
+                } catch (error) {
+                    logger.warn(`Catch-up sync unavailable at startup: ${error.message}`);
+                }
 
                 // Set up message listener for new messages
                 setupMessageListener(client, targetGroup.id._serialized);
