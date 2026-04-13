@@ -20,6 +20,7 @@ function createClient() {
         }),
         puppeteer: {
             headless: true,
+            ...(config.whatsapp.chromiumPath && { executablePath: config.whatsapp.chromiumPath }),
             args: [
                 '--no-sandbox',
                 '--disable-setuid-sandbox',
@@ -27,7 +28,13 @@ function createClient() {
                 '--disable-accelerated-2d-canvas',
                 '--no-first-run',
                 '--no-zygote',
-                '--disable-gpu'
+                '--disable-gpu',
+                '--disable-extensions',
+                '--disable-background-networking',
+                '--disable-translate',
+                '--disable-sync',
+                '--renderer-process-limit=1',
+                '--js-flags=--max-old-space-size=256'
             ]
         }
     });

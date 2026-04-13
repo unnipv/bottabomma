@@ -16,7 +16,8 @@ module.exports = {
     // WhatsApp
     whatsapp: {
         targetGroupId: process.env.TARGET_GROUP_ID,
-        sessionPath: './.wwebjs_auth'
+        sessionPath: './.wwebjs_auth',
+        chromiumPath: process.env.CHROMIUM_PATH || ''
     },
 
     // Catch-up sync
