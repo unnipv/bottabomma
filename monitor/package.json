@@ -1,0 +1,14 @@
+{
+  "name": "bottabomma-monitor",
+  "version": "1.0.0",
+  "description": "Lightweight monitoring portal for the Bottabomma bot",
+  "private": true,
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

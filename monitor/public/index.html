@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bottabomma Monitor</title>
+    <link rel="stylesheet" href="/styles.css">
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div>
+          <p class="eyebrow">Bottabomma Monitor</p>
+          <h1>Bot health from your phone.</h1>
+          <p class="subtle">A tiny sidecar dashboard for status, logs, and Raspberry Pi usage.</p>
+        </div>
+        <div class="pulse" id="status-pill">Connecting...</div>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <h2>Bot</h2>
+          <dl class="stats">
+            <div><dt>Status</dt><dd id="bot-status">-</dd></div>
+            <div><dt>PID</dt><dd id="bot-pid">-</dd></div>
+            <div><dt>Uptime</dt><dd id="bot-uptime">-</dd></div>
+            <div><dt>Restarts</dt><dd id="bot-restarts">-</dd></div>
+          </dl>
+        </article>
+
+        <article class="card">
+          <h2>Bot resources</h2>
+          <dl class="stats">
+            <div><dt>CPU</dt><dd id="bot-cpu">-</dd></div>
+            <div><dt>RAM</dt><dd id="bot-ram">-</dd></div>
+            <div><dt>Started</dt><dd id="bot-started">-</dd></div>
+            <div><dt>Host</dt><dd id="host-name">-</dd></div>
+          </dl>
+        </article>
+
+        <article class="card">
+          <h2>Pi usage</h2>
+          <dl class="stats">
+            <div><dt>CPU usage</dt><dd id="sys-cpu">-</dd></div>
+            <div><dt>Load (1m)</dt><dd id="sys-load">-</dd></div>
+            <div><dt>Memory</dt><dd id="sys-memory">-</dd></div>
+            <div><dt>Disk</dt><dd id="sys-disk">-</dd></div>
+          </dl>
+        </article>
+
+        <article class="card">
+          <h2>System</h2>
+          <dl class="stats">
+            <div><dt>Platform</dt><dd id="sys-platform">-</dd></div>
+            <div><dt>Uptime</dt><dd id="sys-uptime">-</dd></div>
+            <div><dt>Monitor</dt><dd id="monitor-status">-</dd></div>
+            <div><dt>Last refresh</dt><dd id="last-refresh">-</dd></div>
+          </dl>
+        </article>
+
+        <article class="card">
+          <h2>ngrok</h2>
+          <dl class="stats">
+            <div><dt>Status</dt><dd id="ngrok-status">-</dd></div>
+            <div><dt>Public URL</dt><dd id="ngrok-url">-</dd></div>
+            <div><dt>Forwards to</dt><dd id="ngrok-target">-</dd></div>
+            <div><dt>Name</dt><dd id="ngrok-name">-</dd></div>
+          </dl>
+        </article>
+      </section>
+
+      <section class="card logs-card">
+        <div class="logs-head">
+          <div>
+            <p class="eyebrow">Recent output</p>
+            <h2>Latest logs</h2>
+          </div>
+          <button id="refresh-button" type="button">Refresh now</button>
+        </div>
+        <pre id="logs" class="logs">Loading logs...</pre>
+      </section>
+    </main>
+
+    <script src="/app.js"></script>
+  </body>
+  </html>
